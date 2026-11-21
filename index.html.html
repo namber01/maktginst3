@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Student Grade Portal</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    font-family: "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    background: linear-gradient(135deg, #0f2027 0%, #203a43 50%, #2c5364 100%);
+    color: #1f2937;
+  }
+
+  .card {
+    width: 100%;
+    max-width: 420px;
+    background: #ffffff;
+    border-radius: 18px;
+    box-shadow: 0 24px 60px rgba(0, 0, 0, 0.45);
+    padding: 36px 32px 32px;
+    animation: rise .35s ease-out;
+  }
+
+  @keyframes rise {
+    from { opacity: 0; transform: translateY(14px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .brand {
+    text-align: center;
+    margin-bottom: 26px;
+  }
+
+  .brand .logo {
+    width: 56px;
+    height: 56px;
+    margin: 0 auto 14px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #2c5364, #0f2027);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 26px;
+    color: #fff;
+  }
+
+  h1 {
+    font-size: 20px;
+    font-weight: 700;
+    letter-spacing: .3px;
+    color: #0f2027;
+  }
+
+  .subtitle {
+    font-size: 13px;
+    color: #6b7280;
+    margin-top: 6px;
+  }
+
+  label {
+    display: block;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: .6px;
+    text-transform: uppercase;
+    color: #4b5563;
+    margin-bottom: 8px;
+  }
+
+  input {
+    width: 100%;
+    padding: 13px 15px;
+    font-size: 15px;
+    font-family: inherit;
+    letter-spacing: .5px;
+    border: 1.5px solid #d1d5db;
+    border-radius: 10px;
+    outline: none;
+    transition: border-color .18s, box-shadow .18s;
+    background: #f9fafb;
+  }
+
+  input:focus {
+    border-color: #2c5364;
+    background: #fff;
+    box-shadow: 0 0 0 4px rgba(44, 83, 100, 0.15);
+  }
+
+  button {
+    width: 100%;
+    margin-top: 18px;
+    padding: 13px;
+    font-size: 15px;
+    font-weight: 700;
+    letter-spacing: .4px;
+    font-family: inherit;
+    color: #fff;
+    background: linear-gradient(135deg, #2c5364, #0f2027);
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: transform .12s, box-shadow .18s, opacity .18s;
+  }
+
+  button:hover  { box-shadow: 0 10px 22px rgba(15, 32, 39, .35); }
+  button:active { transform: scale(.985); }
+
+  button.ghost {
+    background: #eef2f5;
+    color: #2c5364;
+    margin-top: 22px;
+  }
+  button.ghost:hover { background: #e2e8ed; box-shadow: none; }
+
+  .error {
+    margin-top: 14px;
+    font-size: 13px;
+    font-weight: 600;
+    color: #b91c1c;
+    background: #fee2e2;
+    border: 1px solid #fecaca;
+    border-radius: 9px;
+    padding: 10px 12px;
+    text-align: center;
+    display: none;
+  }
+  .error.show { display: block; animation: shake .3s; }
+
+  @keyframes shake {
+    0%,100% { transform: translateX(0); }
+    25%     { transform: translateX(-5px); }
+    75%     { transform: translateX(5px); }
+  }
+
+  /* ---------- Result view ---------- */
+  .result { display: none; }
+  .result.show { display: block; animation: rise .35s ease-out; }
+
+  .greeting {
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: #9ca3af;
+    text-align: center;
+  }
+
+  .student-name {
+    margin-top: 10px;
+    font-size: 21px;
+    font-weight: 700;
+    line-height: 1.35;
+    text-align: center;
+    color: #0f2027;
+    word-wrap: break-word;
+  }
+
+  .grade-box {
+    margin-top: 26px;
+    padding: 22px 16px;
+    border-radius: 14px;
+    text-align: center;
+    background: linear-gradient(135deg, #eef6f8, #dfeaf0);
+    border: 1px solid #cfe0e8;
+  }
+
+  .grade-label {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 1.2px;
+    text-transform: uppercase;
+    color: #4b5563;
+  }
+
+  .grade-value {
+    margin-top: 8px;
+    font-size: 46px;
+    font-weight: 800;
+    line-height: 1;
+    color: #0f2027;
+    letter-spacing: -1px;
+  }
+
+  .footer-note {
+    margin-top: 22px;
+    font-size: 11px;
+    text-align: center;
+    color: #9ca3af;
+  }
+</style>
+</head>
+<body>
+
+  <div class="card">
+
+    <!-- ============ LOGIN VIEW ============ -->
+    <div id="loginView">
+      <div class="brand">
+        <div class="logo">🎓</div>
+        <h1>Student Grade Portal</h1>
+        <p class="subtitle">Sign in with your Student Number</p>
+      </div>
+
+      <form id="loginForm" autocomplete="off">
+        <label for="studentNumber">Student Number</label>
+        <input
+          type="text"
+          id="studentNumber"
+          name="studentNumber"
+          placeholder="e.g. 24-3120-TS"
+          maxlength="20"
+          required>
+        <button type="submit">View My Grade</button>
+      </form>
+
+      <div class="error" id="errorMsg">Student number not found. Please try again.</div>
+      <p class="footer-note">Grades are for the current term only.</p>
+    </div>
+
+    <!-- ============ RESULT VIEW ============ -->
+    <div class="result" id="resultView">
+      <p class="greeting">Welcome</p>
+      <p class="student-name" id="outName">—</p>
+
+      <div class="grade-box">
+        <div class="grade-label">Term Grade</div>
+        <div class="grade-value" id="outGrade">—</div>
+      </div>
+
+      <button class="ghost" id="logoutBtn" type="button">Log out</button>
+    </div>
+
+  </div>
+
+<script>
+/* ================= COMPLETE STUDENT RECORDS ================= */
+const students = [
+  { id: "24-3120-TS", name: "Acorda Sophia Nicole Domingo", grade: "1.5" },
+  { id: "24-2861", name: "Acosta Desiree Cayapan", grade: "1.75" },
+  { id: "24-0995", name: "Acosta Liza Arciaga", grade: "2.25" },
+  { id: "23-3224-TS", name: "ACOSTA PETER EVAN SANTOYO", grade: "5" },
+  { id: "24-2965-TS", name: "ALCESTO AIRA JANELLE ESPERANZATE", grade: "2.75" },
+  { id: "23-0365", name: "ANDRES HANS JUSTIN FUROC", grade: "5" },
+  { id: "24-1000", name: "Angeliano Zeider Facun", grade: "5" },
+  { id: "23-2501", name: "BANGILAN REYDEL ARLANTE", grade: "5" },
+  { id: "24-1009", name: "Barquez Sarah Mae Nogoy", grade: "1.5" },
+  { id: "24-1015", name: "BUENO ANDREA ROSE", grade: "5" },
+  { id: "25-3206-TS", name: "Cabalse Precious Joy Layugan", grade: "2.5" },
+  { id: "24-1020", name: "Calucag Jovelyn Cabrera", grade: "1.75" },
+  { id: "24-1021", name: "casinoba john mel soliven", grade: "3" },
+  { id: "24-2731", name: "COMA MA. LOVELY KEITH DUMON", grade: "2.25" },
+  { id: "24-2732", name: "CUIZON MARIEL DOROTEO", grade: "2.5" },
+  { id: "25-3207-TS", name: "Dayrit Rhine Ivan Digma", grade: "2.5" },
+  { id: "24-1641", name: "Demegillo Romie Feria", grade: "3" },
+  { id: "24-1611", name: "DUMO LYKA ANGELINE ACACIO", grade: "2.25" },
+  { id: "24-1973", name: "ESTALILLA ERJHEN LEIGH OBTINARIO", grade: "1.5" },
+  { id: "24-1043", name: "Gabriel John Wendell Dela cruz", grade: "5" },
+  { id: "24-3080", name: "Galinggan Rojhana Mae Doronio", grade: "1.5" },
+  { id: "24-1993", name: "GARCIA MYCA NANIONG", grade: "2.25" },
+  { id: "25-3334-TS", name: "Gardon Decerie Sals", grade: "5" },
+  { id: "25-3184-TS", name: "Hernal Clency Ann Miguel", grade: "1.5" },
+  { id: "24-1997", name: "Ibarra Redentor Alfonso", grade: "5" },
+  { id: "25-3230-TS", name: "LLANES JERICHO ACOB", grade: "1.5" },
+  { id: "24-1058", name: "LOGAN KYLA ACOSTA", grade: "2" },
+  { id: "24-1065", name: "Magbaleta Sean Axel Mallari", grade: "2.75" },
+  { id: "24-1071", name: "Manuel Hannah Mae Du", grade: "1.5" },
+  { id: "24-1079", name: "MARTINEZ JAMES MONAR", grade: "3" },
+  { id: "24-1078", name: "Martinez Ralph Vince Aganon", grade: "3" },
+  { id: "24-1080", name: "Melad Nikki Shane Tesoro", grade: "1.5" },
+  { id: "18-3135", name: "NATIVIDAD ARNEL APIGO", grade: "5" },
+  { id: "24-1100", name: "PERALTA RACHELLE MAE BAYANG", grade: "1.5" },
+  { id: "24-3070-TS", name: "QUITOLA STEPHANIE JOY AGUSTIN", grade: "5" },
+  { id: "24-1105", name: "Ramirez Celia Plaza", grade: "2.25" },
+  { id: "24-1112", name: "Rilloraza Allen Garingo", grade: "5" },
+  { id: "24-1114", name: "Rodriguez Joshua Gumarac", grade: "5" },
+  { id: "24-1115", name: "Rodulfo Noel Lappay", grade: "3" },
+  { id: "24-2740", name: "SANDAGA RUTH MILLAN", grade: "2.25" },
+  { id: "24-1698", name: "Santiago Marco Abalos", grade: "5" },
+  { id: "23-2502", name: "TAMANI JENARD LOUIE CAGUNGUN", grade: "5" },
+  { id: "24-1128", name: "Ualat Precy Acosta", grade: "2" },
+  { id: "24-2874", name: "VENTURA KYREL GEM MOLINA", grade: "5" },
+  { id: "24-1702", name: "Vinoya Khris Joy Rambac", grade: "5" }
+];
+
+/* ================= LOOKUP MAP =================
+   Normalizes input so "24-3120-TS", "243120ts", or " 24 3120 ts " will all match. */
+const normalize = (s) => String(s).toUpperCase().replace(/[^A-Z0-9]/g, "");
+
+const index = new Map();
+students.forEach(s => index.set(normalize(s.id), s));
+
+/* ================= ELEMENTS ================= */
+const loginView   = document.getElementById("loginView");
+const resultView  = document.getElementById("resultView");
+const form        = document.getElementById("loginForm");
+const input       = document.getElementById("studentNumber");
+const errorMsg    = document.getElementById("errorMsg");
+const outName     = document.getElementById("outName");
+const outGrade    = document.getElementById("outGrade");
+const logoutBtn   = document.getElementById("logoutBtn");
+
+/* ================= LOGIN ================= */
+form.addEventListener("submit", function (e) {
+  e.preventDefault();
+
+  const key = normalize(input.value);
+  const student = index.get(key);
+
+  if (!student) {
+    errorMsg.classList.remove("show");
+    void errorMsg.offsetWidth;   // restart animation
+    errorMsg.classList.add("show");
+    input.select();
+    return;
+  }
+
+  errorMsg.classList.remove("show");
+  showResult(student);
+});
+
+/* ================= VIEWS ================= */
+function showResult(student) {
+  outName.textContent  = student.name;
+  outGrade.textContent = student.grade;
+
+  loginView.style.display = "none";
+  resultView.classList.add("show");
+  input.value = "";
+}
+
+function logout() {
+  resultView.classList.remove("show");
+  loginView.style.display = "block";
+  errorMsg.classList.remove("show");
+  input.value = "";
+  input.focus();
+}
+
+logoutBtn.addEventListener("click", logout);
+input.addEventListener("input", () => errorMsg.classList.remove("show"));
+
+/* keep focus ready */
+window.addEventListener("load", () => input.focus());
+</script>
+
+</body>
+</html>
